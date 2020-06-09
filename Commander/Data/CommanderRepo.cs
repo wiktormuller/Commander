@@ -25,6 +25,16 @@ namespace Commander.Data
             _context.Commands.Add(command);
         }
 
+        public void DeleteCommand(Command command)
+        {
+            if (command == null)
+            {
+                throw new ArgumentNullException(nameof(command));
+            }
+
+            _context.Commands.Remove(command);
+        }
+
         public IEnumerable<Command> GetAllCommands()
         {
             var commands = _context.Commands.ToList();
@@ -44,9 +54,9 @@ namespace Commander.Data
             return (_context.SaveChanges() >= 0);   //???
         }
 
-        public void UpdateComman(Command command)
+        public void UpdateCommand(Command command)
         {
-            throw new NotImplementedException();
+            //Nothing -> EF Core update it's automatically
         }
     }
 }
