@@ -37,7 +37,7 @@ namespace Commander.Controllers
         }
 
         //GET api/commands/{id}
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCommandById")]
         public ActionResult <CommandReadDto> GetCommandById(int id)    //The id comming from binding sources from [FromQuery]
         {
             var command = _repository.GetCommandById(id);
@@ -47,6 +47,20 @@ namespace Commander.Controllers
                 return Ok(model);
             }
             return NotFound();  //Instead of NoContent()
+        }
+
+        //POST api/commands
+        [HttpPost]
+        public ActionResult<CommandReadDto> CreateCommand(CommandCreateDto commandCreateDto) //It is CommandReadDto because as a respond of POST method is exactly that dto
+        {
+            var model = _mapper.Map<Command>(commandCreateDto);
+            _repository.CreateCommand(model);
+            _repository.SaveChanges();
+
+            var commandReadDto = _mapper.Map<CommandReadDto>(model);    //It;s made for return a response to client as a CommandReadDto to maintain contract - response as a location
+
+            return CreatedAtRoute(nameof(GetCommandById), new { Id = commandReadDto.Id}, commandReadDto);    //https://docs.microsoft.com/en-us/dotnet/api/system.web.http.apicontroller.createdatroute?view=aspnetcore-2.2
+            //return Ok(commandReadDto);
         }
     }
 }
